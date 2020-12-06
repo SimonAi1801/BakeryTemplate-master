@@ -15,7 +15,7 @@ namespace Bakery.Wpf.ViewModels
 {
     public class MainWindowViewModel : BaseViewModel
     {
-
+        private List<ProductDto> _productList;
         private string _priceFrom;
         private string _priceTo;
         private ProductDto _selectedProduct;
@@ -88,7 +88,7 @@ namespace Bakery.Wpf.ViewModels
 
             var products = await uow.Products.GetAllAsync();
             Products = new ObservableCollection<ProductDto>(products.Select(p => new ProductDto(p)));
-
+            _productList = new List<ProductDto>(products.Select(p => new ProductDto(p)));
             SelectedProduct = Products.FirstOrDefault();
         }
 
@@ -136,26 +136,50 @@ namespace Bakery.Wpf.ViewModels
 
         public ICommand CmdEditCommand
         {
-            get 
+            get
             {
                 if (_cmdEditCommand == null)
                 {
                     _cmdEditCommand = new RelayCommand(
-                        execute: _ => 
+                        execute: _ =>
                         {
                             Controller.ShowWindow(new EditCreateProductViewModel(Controller, SelectedProduct), true);
                             _ = LoadProducts();
                         },
                         canExecute: _ => SelectedProduct != null);
                 }
-                return _cmdEditCommand; 
+                return _cmdEditCommand;
             }
         }
 
-
         private void RefreshGrid()
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (PriceFrom != null && PriceTo != null)
+                {
+                    double priceFrom = Convert.ToDouble(PriceFrom);
+                    double priceTo = Convert.ToDouble(PriceTo);
+                    Products = new ObservableCollection<ProductDto>(_productList
+                        .Where(p => p.Price >= priceFrom && p.Price <= priceTo));
+                }
+                else if (PriceFrom != null)
+                {
+                    double priceFrom = Convert.ToDouble(PriceFrom);
+                    Products = new ObservableCollection<ProductDto>(_productList
+                        .Where(p => p.Price >= priceFrom));
+                }
+                else if (PriceTo != null)
+                {
+                    double priceTo = Convert.ToDouble(PriceTo);
+                    Products = new ObservableCollection<ProductDto>(_productList
+                        .Where(p => p.Price <= priceTo));
+                }
+            }
+            catch (Exception ex)
+            {
+                Products = new ObservableCollection<ProductDto>(_productList);
+            }
         }
 
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
