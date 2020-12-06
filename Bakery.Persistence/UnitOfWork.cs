@@ -56,27 +56,16 @@ namespace Bakery.Persistence
         /// <param name="entity"></param>
         private async Task ValidateEntity(object entity)
         {
-            ValidationContext validationContext;
             if (entity is Product product)
             {
-                validationContext = new ValidationContext(product);
-                if (await _dbContext.Products.AnyAsync(p => p.Id != product.Id
-                    && p.Name.Equals(product.Name) && p.ProductNr.Equals(product.ProductNr)))
+                bool productInDb = await _dbContext.Products
+                    .AnyAsync(p => p.Id != product.Id &&
+                    p.ProductNr.ToLower()
+                    .Equals(product.ProductNr.ToLower()));
+
+                if (productInDb)
                 {
-                    throw new ValidationException(new ValidationResult(
-                        $"Product mit dem Namen {product.Name} existiert bereits.",
-                        new List<string> { "Product" }), null, new List<string> { "Product" });
-                }
-            }
-            else if (entity is Order order)
-            {
-                validationContext = new ValidationContext(order);
-                if (await _dbContext.Orders.AnyAsync(o => o.Id != order.Id
-                    && o.OrderNr.Equals(order.OrderNr)))
-                {
-                    throw new ValidationException(new ValidationResult(
-                        $"Bestellung mit der Nummer {order.OrderNr} existiert bereits.",
-                        new List<string> { "Order" }), null, new List<string> { "Order" });
+                    throw new ValidationException($"Die Produktnummer {product.ProductNr} gibt es bereits");
                 }
             }
         }

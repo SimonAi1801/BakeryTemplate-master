@@ -11,5 +11,11 @@ namespace Bakery.Core.Contracts
         Task AddRangeAsync(IEnumerable<Product> products);
 
         Task<Product[]> GetAllAsync();
+
+        Task AddAsync(Product product);
+
+        void Update(Product product);
+
+        Task<Product> GetByIdAsync(int id);
     }
 }

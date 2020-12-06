@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Bakery.Wpf.Views"
         mc:Ignorable="d"
-        Title="EditCreateProductWindow" Height="220" Width="400">
+        Title="EditCreateProductWindow" Height="220" Width="500">
     <Grid ShowGridLines="False">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5"/>
@@ -69,6 +69,10 @@
                 Margin="5,5,5,5" Content="Rückgängig"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Stretch"
-               Command="{Binding Path=CmdSaveCommand}" />
+               Command="{Binding Path=CmdUndoCommand}" />
+
+        <Label Grid.Row="9" Grid.Column="4"
+               VerticalAlignment="Center" 
+               Style="{StaticResource ErrorFontColorStyle}" Content="{Binding DbError}"/>
     </Grid>
 </Window>

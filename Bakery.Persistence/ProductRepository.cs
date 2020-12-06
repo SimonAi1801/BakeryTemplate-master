@@ -31,5 +31,17 @@ namespace Bakery.Persistence
         => await _dbContext.Products
                            .Include(p => p.OrderItems)
                            .ToArrayAsync();
+
+        public async Task AddAsync(Product product)
+        => await _dbContext.Products
+                           .AddAsync(product);
+
+        public void Update(Product product)
+        => _dbContext.Products
+                     .Update(product);
+
+        public async Task<Product> GetByIdAsync(int id)
+        => await _dbContext.Products
+                           .SingleOrDefaultAsync(p => p.Id == id);
     }
 }
