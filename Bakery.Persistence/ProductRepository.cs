@@ -26,5 +26,10 @@ namespace Bakery.Persistence
         {
             await _dbContext.Products.AddRangeAsync(products);
         }
+
+        public async Task<Product[]> GetAllAsync()
+        => await _dbContext.Products
+                           .Include(p => p.OrderItems)
+                           .ToArrayAsync();
     }
 }
